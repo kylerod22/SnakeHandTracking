@@ -11,7 +11,7 @@ wCam, hCam = 640, 480
 prev_time = 0
 curr_time = 0
 
-threshold = 16000
+threshold = 18000
 
 id = 0
 cam = cv.VideoCapture(id)

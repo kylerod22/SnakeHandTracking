@@ -8,7 +8,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final int scale = 2;
 
     KeyHandler keyHandler = new KeyHandler();
-    int delayMillis = 300;
+    int delayMillis = 200;
 
     final Color[] gameColors = {Color.GREEN, Color.RED}; //Snake Color, Food Color
 
