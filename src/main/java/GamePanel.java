@@ -8,13 +8,14 @@ public class GamePanel extends JPanel implements Runnable {
     private final int scale = 2;
 
     KeyHandler keyHandler = new KeyHandler();
-    int delayMillis = 100;
+    int delayMillis = 300;
 
     final Color[] gameColors = {Color.GREEN, Color.RED}; //Snake Color, Food Color
 
     private int points = 1;
     static Snake snake;
     Food food;
+    boolean runGame = true;
 
     PyProcess p;
 
@@ -29,7 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
-        p = new PyProcess(System.getProperty("user.dir") + "/src/main/python/hand_direction_detection.py");
+        initListenerThread();
         snake = new Snake();
         food = new Food();
         Thread gameThread = new Thread(this);
@@ -39,14 +40,14 @@ public class GamePanel extends JPanel implements Runnable {
     @Override
     public void run() {
 
-        boolean runGame = true;
         boolean ateFruit;
         int initTime = (int) System.currentTimeMillis();
         repaint();
 
         while (runGame) {
+
             if ((int) System.currentTimeMillis() - initTime >= delayMillis) {
-                update();
+                //update();
                 if (!snake.canMove()) runGame = false;
                 initTime = (int) System.currentTimeMillis();
                 ateFruit = snake.ateFood(food.xPos, food.yPos);
@@ -63,31 +64,74 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-        if (keyHandler.leftPressed) {
-            if (snake.currDirection != Snake.direction.RIGHT) {
-                snake.currDirection = Snake.direction.LEFT;
-                snake.dx = -1; snake.dy = 0;
-            }
-        }
-        if (keyHandler.rightPressed) {
-            if (snake.currDirection != Snake.direction.LEFT) {
-                snake.currDirection = Snake.direction.RIGHT;
-                snake.dx = 1; snake.dy = 0;
-            }
-        }
-        if (keyHandler.downPressed) {
-            if (snake.currDirection != Snake.direction.UP) {
-                snake.currDirection = Snake.direction.DOWN;
-                snake.dx = 0; snake.dy = 1;
-            }
-        }
-        if (keyHandler.upPressed) {
-            if (snake.currDirection != Snake.direction.DOWN) {
-                snake.currDirection = Snake.direction.UP;
-                snake.dx = 0; snake.dy = -1;
+        String strDir = p.tryRead();
+        if (strDir != null && !strDir.equals("")) {
+            switch (strDir) {
+                case "LEFT":
+                    if (snake.currDirection != Snake.direction.RIGHT) {
+                        snake.currDirection = Snake.direction.LEFT;
+                        snake.dx = -1; snake.dy = 0;
+                    }
+                    break;
+                case "RIGHT":
+                    if (snake.currDirection != Snake.direction.LEFT) {
+                        snake.currDirection = Snake.direction.RIGHT;
+                        snake.dx = 1; snake.dy = 0;
+                    }
+                    break;
+                case "DOWN":
+                    if (snake.currDirection != Snake.direction.UP) {
+                        snake.currDirection = Snake.direction.DOWN;
+                        snake.dx = 0; snake.dy = 1;
+                    }
+                    break;
+                case "UP":
+                    if (snake.currDirection != Snake.direction.DOWN) {
+                        snake.currDirection = Snake.direction.UP;
+                        snake.dx = 0; snake.dy = -1;
+                    }
+                    break;
             }
         }
     }
+
+    public void initListenerThread() {
+        p = new PyProcess(System.getProperty("user.dir") + "/src/main/python/hand_direction_detection.py");
+        Thread pyListenerThread = new Thread(() -> {
+            while (runGame) {
+                update();
+            }
+        });
+
+        pyListenerThread.start();
+    }
+
+//    public void update() {
+//        if (keyHandler.leftPressed) {
+//            if (snake.currDirection != Snake.direction.RIGHT) {
+//                snake.currDirection = Snake.direction.LEFT;
+//                snake.dx = -1; snake.dy = 0;
+//            }
+//        }
+//        if (keyHandler.rightPressed) {
+//            if (snake.currDirection != Snake.direction.LEFT) {
+//                snake.currDirection = Snake.direction.RIGHT;
+//                snake.dx = 1; snake.dy = 0;
+//            }
+//        }
+//        if (keyHandler.downPressed) {
+//            if (snake.currDirection != Snake.direction.UP) {
+//                snake.currDirection = Snake.direction.DOWN;
+//                snake.dx = 0; snake.dy = 1;
+//            }
+//        }
+//        if (keyHandler.upPressed) {
+//            if (snake.currDirection != Snake.direction.DOWN) {
+//                snake.currDirection = Snake.direction.UP;
+//                snake.dx = 0; snake.dy = -1;
+//            }
+//        }
+//    }
 
     public void paintComponent(Graphics g) {
         if (food == null && snake == null) return;

@@ -11,7 +11,7 @@ wCam, hCam = 640, 480
 prev_time = 0
 curr_time = 0
 
-threshold = 12000
+threshold = 16000
 
 id = 0
 cam = cv.VideoCapture(id)
@@ -55,7 +55,7 @@ while True:
                 else:
                     direction = "DOWN"
         if lastDir != direction:
-            print(direction)
+            print(direction, flush=True)
             lastDir = direction
 
             # print(dx, dy)

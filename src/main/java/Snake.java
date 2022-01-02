@@ -2,15 +2,16 @@ import java.util.LinkedList;
 
 public class Snake {
     int headXPos, headYPos;
-    int dx = 1, dy = 0;
-    direction currDirection = direction.RIGHT;
+    int dx = 0, dy = 0;
+    direction currDirection = direction.STATIONARY;
     public static LinkedList<int[]> bodyList;
 
     public enum direction {
         LEFT,
         RIGHT,
         UP,
-        DOWN
+        DOWN,
+        STATIONARY
     }
 
     public Snake() {
@@ -21,9 +22,11 @@ public class Snake {
     }
 
     public boolean canMove() {
+        if (currDirection == direction.STATIONARY) return true;
         if (headXPos + dx >= 0 && headXPos + dx < Game.WIDTH && headYPos + dy >= 0 && headYPos + dy < Game.HEIGHT) {
             for (int[] bodyCoord : bodyList) {
                 if (GamePanel.compareCoordinates(new int[]{headXPos + dx, headYPos + dy}, bodyCoord)) {
+
                     return false;
                 }
             }
