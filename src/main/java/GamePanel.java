@@ -66,16 +66,28 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         if (keyHandler.leftPressed) {
-            snake.dx = -1; snake.dy = 0;
+            if (snake.currDirection != Snake.direction.RIGHT) {
+                snake.currDirection = Snake.direction.LEFT;
+                snake.dx = -1; snake.dy = 0;
+            }
         }
         if (keyHandler.rightPressed) {
-            snake.dx = 1; snake.dy = 0;
+            if (snake.currDirection != Snake.direction.LEFT) {
+                snake.currDirection = Snake.direction.RIGHT;
+                snake.dx = 1; snake.dy = 0;
+            }
         }
         if (keyHandler.downPressed) {
-            snake.dx = 0; snake.dy = 1;
+            if (snake.currDirection != Snake.direction.UP) {
+                snake.currDirection = Snake.direction.DOWN;
+                snake.dx = 0; snake.dy = 1;
+            }
         }
         if (keyHandler.upPressed) {
-            snake.dx = 0; snake.dy = -1;
+            if (snake.currDirection != Snake.direction.DOWN) {
+                snake.currDirection = Snake.direction.UP;
+                snake.dx = 0; snake.dy = -1;
+            }
         }
     }
 

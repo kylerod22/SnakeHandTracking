@@ -3,7 +3,15 @@ import java.util.LinkedList;
 public class Snake {
     int headXPos, headYPos;
     int dx = 1, dy = 0;
+    direction currDirection = direction.RIGHT;
     public static LinkedList<int[]> bodyList;
+
+    public enum direction {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
+    }
 
     public Snake() {
         headXPos = Game.WIDTH / 2;
