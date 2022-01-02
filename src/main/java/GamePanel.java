@@ -1,32 +1,24 @@
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.IntStream;
+
 
 public class GamePanel extends JPanel implements Runnable {
     private final int pixelSize = 16;
     private final int scale = 2;
-    private final int screenWidth = scale * pixelSize * Game.WIDTH;
-    private final int screenHeight = scale * pixelSize * Game.HEIGHT;
 
     KeyHandler keyHandler = new KeyHandler();
-
-    Thread gameThread;
     int delayMillis = 100;
 
-
-    public static int[][] board;
     final Color[] gameColors = {Color.GREEN, Color.RED}; //Snake Color, Food Color
 
-    private static int points = 1;
+    private int points = 1;
     Snake snake;
     Food food;
 
     public GamePanel() {
+        final int screenWidth = scale * pixelSize * Game.WIDTH;
+        final int screenHeight = scale * pixelSize * Game.HEIGHT;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
@@ -35,13 +27,12 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
-        gameThread = new Thread(this);
+        Thread gameThread = new Thread(this);
         gameThread.start();
     }
 
     @Override
     public void run() {
-        board = new int[Game.HEIGHT][Game.WIDTH];
         snake = new Snake();
         boolean runGame = true;
         boolean ateFruit;
@@ -60,6 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
                 ateFruit = snake.ateFood(food.xPos, food.yPos);
                 if (ateFruit) {
                     food = new Food();
+                    points++;
                 }
                 if (snake.canMove()) {
                     snake.move(ateFruit);
@@ -88,36 +80,21 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void paintComponent(Graphics g) {
-        if (board == null) return;
-
+        if (food == null && snake == null) return;
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        g2.setColor(gameColors[1]);
+        g2.fillRect(scale * pixelSize * food.xPos, scale * pixelSize * food.yPos,
+                scale * pixelSize, scale * pixelSize);
 
-
-        for (int i = 0; i < Game.HEIGHT; i++) {
-            for (int j = 0; j < Game.WIDTH; j++) {
-                if (board[i][j] > 0) {
-                    g2.setColor(gameColors[board[i][j] - 1]);
-                    g2.fillRect(scale * pixelSize * j, scale * pixelSize * i,
-                            scale * pixelSize, scale * pixelSize);
-                }
-            }
+        g2.setColor(gameColors[0]);
+        for (int[] bodyCoord : Snake.bodyList) {
+            g2.fillRect(scale * pixelSize * bodyCoord[0], scale * pixelSize * bodyCoord[1],
+                    scale * pixelSize, scale * pixelSize);
         }
     }
 
     public static boolean compareCoordinates(int[] first, int[] second) {
         return (first[0] == second[0] && first[1] == second[1]);
     }
-
-    public void print() {
-        for (int i = 0; i < Game.HEIGHT; i++) {
-            for (int j = 0; j < Game.WIDTH; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.print('\n');
-        }
-        System.out.println("-----------\n");
-    }
-
-
 }
