@@ -5,14 +5,14 @@ public class Food {
 
     public Food() {
         Random rand = new Random();
-        boolean flag = true;
-        while (flag) {
+        boolean occupiesSnake = true;
+        while (occupiesSnake) {
             xPos = rand.nextInt(Game.WIDTH);
             yPos = rand.nextInt(Game.HEIGHT);
-            flag = false;
+            occupiesSnake = false;
             for (int[] bodyCoord : Snake.bodyList) {
                 if (GamePanel.compareCoordinates(new int[]{xPos, yPos}, bodyCoord)) {
-                    flag = true;
+                    occupiesSnake = true;
                     break;
                 }
             }

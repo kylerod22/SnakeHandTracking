@@ -16,6 +16,8 @@ public class GamePanel extends JPanel implements Runnable {
     static Snake snake;
     Food food;
 
+    PyProcess p;
+
     public GamePanel() {
         final int screenWidth = scale * pixelSize * Game.WIDTH;
         final int screenHeight = scale * pixelSize * Game.HEIGHT;
@@ -27,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
+        p = new PyProcess(System.getProperty("user.dir") + "/src/main/python/hand_direction_detection.py");
         snake = new Snake();
         food = new Food();
         Thread gameThread = new Thread(this);
@@ -35,6 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
+
         boolean runGame = true;
         boolean ateFruit;
         int initTime = (int) System.currentTimeMillis();
@@ -43,25 +47,19 @@ public class GamePanel extends JPanel implements Runnable {
         while (runGame) {
             if ((int) System.currentTimeMillis() - initTime >= delayMillis) {
                 update();
-                if (!snake.canMove()) {
-                   runGame = false;
-                }
-
+                if (!snake.canMove()) runGame = false;
                 initTime = (int) System.currentTimeMillis();
                 ateFruit = snake.ateFood(food.xPos, food.yPos);
                 if (ateFruit) {
                     food = new Food();
                     points++;
                 }
-                if (snake.canMove()) {
-                    snake.move(ateFruit);
-                }
-
+                if (snake.canMove()) snake.move(ateFruit);
                 repaint();
             }
         }
 
-
+        p.exit();
     }
 
     public void update() {
