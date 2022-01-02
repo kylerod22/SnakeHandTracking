@@ -18,6 +18,6 @@ public class Food {
             }
 
         }
-        GamePanel.board[xPos][yPos] = 2;
+        GamePanel.board[yPos][xPos] = 2;
     }
 }
