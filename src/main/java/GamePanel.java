@@ -13,7 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
     final Color[] gameColors = {Color.GREEN, Color.RED}; //Snake Color, Food Color
 
     private int points = 1;
-    Snake snake;
+    static Snake snake;
     Food food;
 
     public GamePanel() {
@@ -27,17 +27,17 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGame() {
+        snake = new Snake();
+        food = new Food();
         Thread gameThread = new Thread(this);
         gameThread.start();
     }
 
     @Override
     public void run() {
-        snake = new Snake();
         boolean runGame = true;
         boolean ateFruit;
         int initTime = (int) System.currentTimeMillis();
-        food = new Food();
         repaint();
 
         while (runGame) {
