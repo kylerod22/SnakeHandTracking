@@ -1,18 +1,20 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.InputStream;
+import java.util.Properties;
 
 
 public class GamePanel extends JPanel implements Runnable {
     private final int pixelSize = 16;
-    private final int scale = 2;
+    public static int height = 20, width = 20;
+    private int scale = 2, delayMillis = 200, points = 1, camId = 0;
+    private boolean camInverted = false;
 
     KeyHandler keyHandler = new KeyHandler();
-    int delayMillis = 200;
 
     final Color[] gameColors = {Color.GREEN, Color.RED}; //Snake Color, Food Color
 
-    private int points = 1;
     static Snake snake;
     Food food;
     boolean runGame = true;
@@ -20,8 +22,9 @@ public class GamePanel extends JPanel implements Runnable {
     PyProcess p;
 
     public GamePanel() {
-        final int screenWidth = scale * pixelSize * Game.WIDTH;
-        final int screenHeight = scale * pixelSize * Game.HEIGHT;
+        initConfig();
+        final int screenWidth = scale * pixelSize * width;
+        final int screenHeight = scale * pixelSize * height;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
@@ -92,6 +95,25 @@ public class GamePanel extends JPanel implements Runnable {
                     }
                     break;
             }
+        }
+    }
+
+    public void initConfig() {
+        Properties prop = new Properties();
+        try {
+            InputStream configInput = getClass().getClassLoader().getResourceAsStream("config.properties");
+            if (configInput != null) {
+                prop.load(configInput);
+                width = Integer.parseInt(prop.getProperty("Width"));
+                height = Integer.parseInt(prop.getProperty("Height"));
+                delayMillis = Integer.parseInt(prop.getProperty("DelayMillis"));
+                scale = Integer.parseInt(prop.getProperty("Scale"));
+                camId = Integer.parseInt(prop.getProperty("CamId"));
+                camInverted = Boolean.parseBoolean(prop.getProperty("CamInverted"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

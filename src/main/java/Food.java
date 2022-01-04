@@ -7,8 +7,8 @@ public class Food {
         Random rand = new Random();
         boolean occupiesSnake = true;
         while (occupiesSnake) {
-            xPos = rand.nextInt(Game.WIDTH);
-            yPos = rand.nextInt(Game.HEIGHT);
+            xPos = rand.nextInt(GamePanel.width);
+            yPos = rand.nextInt(GamePanel.height);
             occupiesSnake = false;
             for (int[] bodyCoord : Snake.bodyList) {
                 if (GamePanel.compareCoordinates(new int[]{xPos, yPos}, bodyCoord)) {

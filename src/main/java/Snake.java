@@ -15,15 +15,15 @@ public class Snake {
     }
 
     public Snake() {
-        headXPos = Game.WIDTH / 2;
-        headYPos = Game.WIDTH / 2;
+        headXPos = GamePanel.width / 2;
+        headYPos = GamePanel.width / 2;
         bodyList = new LinkedList<>();
         bodyList.addFirst(new int[] {headXPos, headYPos});
     }
 
     public boolean canMove() {
         if (currDirection == direction.STATIONARY) return true;
-        if (headXPos + dx >= 0 && headXPos + dx < Game.WIDTH && headYPos + dy >= 0 && headYPos + dy < Game.HEIGHT) {
+        if (headXPos + dx >= 0 && headXPos + dx < GamePanel.width && headYPos + dy >= 0 && headYPos + dy < GamePanel.height) {
             for (int[] bodyCoord : bodyList) {
                 if (GamePanel.compareCoordinates(new int[]{headXPos + dx, headYPos + dy}, bodyCoord)) {
 

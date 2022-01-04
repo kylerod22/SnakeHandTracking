@@ -13,7 +13,7 @@ curr_time = 0
 
 threshold = 18000
 
-id = 0
+id = 1
 cam = cv.VideoCapture(id)
 cam.set(3, wCam)
 cam.set(4, hCam)

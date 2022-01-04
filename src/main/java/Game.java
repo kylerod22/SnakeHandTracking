@@ -3,8 +3,6 @@ import javax.swing.*;
 public class Game {
 
     public final String NAME = "Snake";
-    public static final int WIDTH = 20, HEIGHT = 20;
-
 
     public Game() {
 
