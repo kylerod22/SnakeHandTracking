@@ -6,7 +6,8 @@ public class PyProcess {
     BufferedReader input;
     public PyProcess(String path) {
         try {
-            process = new ProcessBuilder("python", '"' + path + '"').start();
+            process = new ProcessBuilder("python", '"' + path + '"',
+                    String.valueOf(GamePanel.camId), String.valueOf(GamePanel.camInverted)).start();
             input = new BufferedReader((new InputStreamReader(process.getInputStream())));
         } catch (Exception e) {
             e.printStackTrace();

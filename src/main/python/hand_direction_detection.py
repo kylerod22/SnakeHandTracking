@@ -2,6 +2,7 @@ import cv2 as cv
 import time
 import numpy as np
 import hand_tracking_module as htm
+import sys
 
 init_x_list = np.zeros(21, dtype=int)
 init_y_list = np.zeros(21, dtype=int)
@@ -13,8 +14,15 @@ curr_time = 0
 
 threshold = 18000
 
-id = 1
-cam = cv.VideoCapture(id)
+cam_id = 0
+cam_inverted = False
+
+if len(sys.argv) > 1:
+    cam_id = int(sys.argv[1])
+    cam_inverted = bool(sys.argv[2])
+
+
+cam = cv.VideoCapture(cam_id)
 cam.set(3, wCam)
 cam.set(4, hCam)
 
@@ -34,17 +42,19 @@ while True:
     if len(landmark_list) > 0:
         total_x = 0
         total_y = 0
-        for id, landmark in enumerate(landmark_list):
-            total_x += (landmark[1] - init_x_list[id])
-            total_y += (landmark[2] - init_y_list[id])
-            init_x_list[id] = landmark[1]
-            init_y_list[id] = landmark[2]
+        for cam_id, landmark in enumerate(landmark_list):
+            total_x += (landmark[1] - init_x_list[cam_id])
+            total_y += (landmark[2] - init_y_list[cam_id])
+            init_x_list[cam_id] = landmark[1]
+            init_y_list[cam_id] = landmark[2]
 
         dx = total_x // (1 / fps)
         dy = -total_y // (1 / fps)
 
         if abs(dx) > threshold or abs(dy) > threshold:
             if abs(dx) > abs(dy):
+                if cam_inverted:
+                    dx *= -1
                 if dx >= 0:
                     direction = "RIGHT"
                 else:

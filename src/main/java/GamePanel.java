@@ -7,9 +7,9 @@ import java.util.Properties;
 
 public class GamePanel extends JPanel implements Runnable {
     private final int pixelSize = 16;
-    public static int height = 20, width = 20;
-    private int scale = 2, delayMillis = 200, points = 1, camId = 0;
-    private boolean camInverted = false;
+    public static int height = 20, width = 20, camId = 0;
+    public static boolean camInverted = false;
+    private int scale = 2, delayMillis = 200, points = 1;
 
     KeyHandler keyHandler = new KeyHandler();
 
@@ -50,7 +50,7 @@ public class GamePanel extends JPanel implements Runnable {
         while (runGame) {
 
             if ((int) System.currentTimeMillis() - initTime >= delayMillis) {
-                //update();
+                //update(); for KeyHandler
                 if (!snake.canMove()) runGame = false;
                 initTime = (int) System.currentTimeMillis();
                 ateFruit = snake.ateFood(food.xPos, food.yPos);
