@@ -6,7 +6,7 @@ public class PyProcess {
     BufferedReader input;
     public PyProcess(String path) {
         try {
-            process = Runtime.getRuntime().exec("python " + '"' + path + '"');
+            process = new ProcessBuilder("python", '"' + path + '"').start();
             input = new BufferedReader((new InputStreamReader(process.getInputStream())));
         } catch (Exception e) {
             e.printStackTrace();
