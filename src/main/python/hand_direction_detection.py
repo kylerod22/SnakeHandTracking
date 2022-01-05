@@ -69,8 +69,10 @@ while True:
             lastDir = direction
 
             # print(dx, dy)
-        # print("--------")    
+        # print("--------")
 
+    if cam_inverted:
+        img = cv.flip(img, flipCode=1)
     cv.putText(img, str(int(fps)), (10, 70), cv.FONT_HERSHEY_COMPLEX, 1, (255, 0, 255), 3)
     cv.imshow("Video", img)
     if cv.waitKey(1) & 0xFF == ord('q'):
