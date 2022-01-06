@@ -19,7 +19,10 @@ cam_inverted = False
 
 if len(sys.argv) > 1:
     cam_id = int(sys.argv[1])
-    cam_inverted = bool(sys.argv[2])
+    if sys.argv[2].lower() == "true":
+        cam_inverted = True
+    else:
+        cam_inverted = False
 
 
 cam = cv.VideoCapture(cam_id)

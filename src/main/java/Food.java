@@ -10,12 +10,15 @@ public class Food {
             xPos = rand.nextInt(GamePanel.width);
             yPos = rand.nextInt(GamePanel.height);
             occupiesSnake = false;
-            for (int[] bodyCoord : Snake.bodyList) {
-                if (GamePanel.compareCoordinates(new int[]{xPos, yPos}, bodyCoord)) {
-                    occupiesSnake = true;
-                    break;
+            for (Snake currSnake : GamePanel.snakePlayers) {
+                for (int[] bodyCoord : currSnake.bodyList) {
+                    if (GamePanel.compareCoordinates(new int[]{xPos, yPos}, bodyCoord)) {
+                        occupiesSnake = true;
+                        break;
+                    }
                 }
             }
+
         }
     }
 }
