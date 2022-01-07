@@ -48,25 +48,25 @@ public class Snake {
             direction proposedDirection = direction.valueOf(inputDirection);
             switch (proposedDirection) {
                 case LEFT:
-                    if (currDirection != direction.RIGHT) {
+                    if (currDirection != direction.RIGHT || bodyList.size() == 1) {
                         currDirection = direction.LEFT;
                         dx = -1; dy = 0;
                     }
                     break;
                 case RIGHT:
-                    if (currDirection != direction.LEFT) {
+                    if (currDirection != direction.LEFT || bodyList.size() == 1) {
                         currDirection = direction.RIGHT;
                         dx = 1; dy = 0;
                     }
                     break;
                 case DOWN:
-                    if (currDirection != direction.UP) {
+                    if (currDirection != direction.UP || bodyList.size() == 1) {
                         currDirection = direction.DOWN;
                         dx = 0; dy = 1;
                     }
                     break;
                 case UP:
-                    if (currDirection != direction.DOWN) {
+                    if (currDirection != direction.DOWN || bodyList.size() == 1) {
                         currDirection = direction.UP;
                         dx = 0; dy = -1;
                     }
