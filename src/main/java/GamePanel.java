@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable {
         initListenerThread();
         snake = new Snake(hasOpponent);
         snakePlayers.add(snake);
-        if (hasOpponent) snakeOpponent = new SnakeCPU(); snakePlayers.add(snakeOpponent);
+        if (hasOpponent) {snakeOpponent = new SnakeCPU(); snakePlayers.add(snakeOpponent);}
         food = new Food();
         Thread gameThread = new Thread(this);
         gameThread.start();
@@ -58,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
         p.exit();
     }
 
-    public void update() {
+    public void listenerUpdate() {
         String strDir = p.tryRead();
         if (strDir != null && !strDir.equals("")) {
             snake.setDirection(strDir);
@@ -89,7 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
         p = new PyProcess(System.getProperty("user.dir") + "/src/main/python/hand_direction_detection.py");
         Thread pyListenerThread = new Thread(() -> {
             while (runGame) {
-                update();
+                listenerUpdate();
             }
         });
         pyListenerThread.start();

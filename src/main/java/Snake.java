@@ -27,12 +27,13 @@ public class Snake {
         bodyList.addFirst(new int[] {headXPos, headYPos});
     }
 
-    public boolean canMove(int inDx, int inDy) {
-        if (currDirection == direction.STATIONARY) return true;
-        if (headXPos + inDx >= 0 && headXPos + inDx < GamePanel.width && headYPos + inDy >= 0 && headYPos + inDy < GamePanel.height) {
+    protected boolean canMove(int initX, int initY, int inDx, int inDy) {
+        if (inDx == 0 && inDy == 0) return true;
+        int newHeadXPos = initX + inDx, newHeadYPos = initY + inDy;
+        if (newHeadXPos >= 0 && newHeadXPos < GamePanel.width && newHeadYPos >= 0 && newHeadYPos < GamePanel.height) {
             for (Snake currSnake : GamePanel.snakePlayers) {
                 for (int[] bodyCoord : currSnake.bodyList) {
-                    if (GamePanel.compareCoordinates(new int[]{headXPos + inDx, headYPos + inDy}, bodyCoord)) {
+                    if (GamePanel.compareCoordinates(new int[]{newHeadXPos, newHeadYPos}, bodyCoord)) {
                         return false;
                     }
                 }
@@ -76,24 +77,23 @@ public class Snake {
         }
     }
 
-    public void move(boolean grow) {
+    protected void move(boolean grow) {
         if (!grow) bodyList.removeLast(); //If the snake doesn't grow, pop the tail
         headXPos += dx; headYPos += dy; //Push the head to the front of the Linked List
         bodyList.addFirst(new int[] {headXPos, headYPos});
     }
 
-    public boolean ateFood(Food food) {
+    protected boolean ateFood(Food food) {
         return GamePanel.compareCoordinates(new int[] {headXPos, headYPos},new int[] {food.xPos, food.yPos});
     }
 
     public void update() {
-        if (!canMove(dx, dy)) GamePanel.runGame = false;
+        if (!canMove(headXPos, headYPos, dx, dy)) {GamePanel.runGame = false; return;}
         ateFruit = ateFood(GamePanel.food);
         if (ateFruit) {
             GamePanel.food = new Food();
             GamePanel.points++;
         }
-        if (canMove(dx, dy)) move(ateFruit);
-
+        if (canMove(headXPos, headYPos, dx, dy)) move(ateFruit);
     }
 }

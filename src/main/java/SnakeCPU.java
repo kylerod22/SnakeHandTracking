@@ -1,8 +1,12 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class SnakeCPU extends Snake {
+    private ArrayList<int[]> visited;
+    private boolean doMove = false;
     public SnakeCPU() {
         super(true);
+        visited = new ArrayList<>();
         headXPos = GamePanel.width / 4 * 3;
         headYPos = GamePanel.height / 4 * 3;
         bodyList = new LinkedList<>();
@@ -33,34 +37,77 @@ public class SnakeCPU extends Snake {
         }
     }
 
-    public void setBestDirection() {
-        double shortestDist = distToFood(dx, dy);
-        direction bestDirection = currDirection;
+    private void setBestDirection() {
+        direction bestDirection = direction.LEFT;
+        int[] bestDxDy = getDxDyFromDirection(bestDirection);
+        double bestDistance = distToFood(bestDxDy[0], bestDxDy[1]);//Shortest distance to food takes priority
         for (direction testDir : direction.values()) {
             if (testDir == direction.STATIONARY) continue;
             int[] testDxDy = getDxDyFromDirection(testDir);
             double testDist = distToFood(testDxDy[0], testDxDy[1]);
-            //System.out.println(testDir + " " + canMove(testDxDy[0], testDxDy[1]));
-            if (testDist <= shortestDist && canMove(testDxDy[0], testDxDy[1])) {
+            if (testDist < bestDistance && canMove(headXPos, headYPos, testDxDy[0], testDxDy[1])) {
                 bestDirection = testDir;
-                shortestDist = testDist;
+                bestDistance = testDist;
             }
         }
 
-        int[] bestDxDy = getDxDyFromDirection(bestDirection);
-        if (!canMove(bestDxDy[0], bestDxDy[1])) {
+        visited.removeAll(visited);
+        bestDxDy = getDxDyFromDirection(bestDirection);
+        int bestOpenSpots = findOpenSpots(headXPos + bestDxDy[0], headYPos + bestDxDy[1]); //Next, find the more open area
+        for (direction testDir : direction.values()) {
+            if (testDir == direction.STATIONARY) continue;
+            visited.removeAll(visited);
+            int[] testDxDy = getDxDyFromDirection(testDir);
+            if (canMove(headXPos, headYPos, testDxDy[0], testDxDy[1])) {
+                int testOpenSpots = findOpenSpots(headXPos + testDxDy[0], headYPos + testDxDy[1]);
+                if (testOpenSpots > bestOpenSpots) {
+                    bestDirection = testDir;
+                    bestOpenSpots = testOpenSpots;
+                }
+            }
+        }
+        
+        bestDxDy = getDxDyFromDirection(bestDirection); //Finally, check if it can move in that direction
+        if (!canMove(headXPos, headYPos, bestDxDy[0], bestDxDy[1])) {
             for (direction testDir : direction.values()) {
+                if (testDir == direction.STATIONARY) continue;
                 int[] testDxDy = getDxDyFromDirection(testDir);
-                if (canMove(testDxDy[0], testDxDy[1])) bestDirection = testDir;
+                if (canMove(headXPos, headYPos, testDxDy[0], testDxDy[1])) bestDirection = testDir;
             }
         }
         setDirection(bestDirection.name());
     }
 
+    private int findOpenSpots(int initX, int initY) {
+        int count = 1;
+        visited.add(new int[] {initX, initY});
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 ^ dy == 0) {
+                    //System.out.println(initX + " " + initY + " " + dx + " " + dy + " " + canMove(initX, initY, dx, dy));
+                    if (canMove(initX, initY, dx, dy)) {
+                        int nextX = initX + dx, nextY = initY + dy;
+                        //System.out.println(nextX + " " + nextY);
+                        if (!visited(nextX, nextY)) count += findOpenSpots(nextX, nextY);
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    private boolean visited(int testX, int testY) {
+        for (int[] coord : visited) {
+            if (GamePanel.compareCoordinates(new int[] {testX, testY}, coord)) return true;
+        }
+        return false;
+    }
+
     public void update() {
-        if (GamePanel.snake.currDirection != direction.STATIONARY) {
+        doMove = !doMove;
+        if (GamePanel.snake.currDirection != direction.STATIONARY && doMove) {
             setBestDirection();
-            if (!canMove(dx, dy)) {GamePanel.runGame = false; return;}
+            if (!canMove(headXPos, headYPos, dx, dy)) {GamePanel.runGame = false; return;}
             move(ateFruit);
             ateFruit = ateFood(GamePanel.food);
             if (ateFruit) {
